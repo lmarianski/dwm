@@ -1,0 +1,5 @@
+*.diff
+pkg
+src
+*.c
+*.tar*
