@@ -13,15 +13,41 @@ options=(zipman)
 depends=('libx11' 'libxinerama' 'libxft' 'freetype2' 'st' 'dmenu')
 install=dwm.install
 source=(http://dl.suckless.org/dwm/dwm-$pkgver.tar.gz
-	config.h
-	dwm.desktop)
+  config.h
+  dwm.desktop
+  https://dwm.suckless.org/patches/fullgaps/dwm-fullgaps-$pkgver.diff
+  https://dwm.suckless.org/patches/xresources/dwm-xresources-$pkgver.diff
+  https://dwm.suckless.org/patches/scratchpad/dwm-scratchpad-$pkgver.diff
+  https://dwm.suckless.org/patches/transfer/dwm-transfer-$pkgver.diff
+  # https://dwm.suckless.org/patches/selfrestart/dwm-r1615-selfrestart.diff
+  dwm-r1615-selfrestart.diff
+  https://lists.suckless.org/dev/att-7590/shiftview.c
+)
 sha256sums=('97902e2e007aaeaa3c6e3bed1f81785b817b7413947f1db1d3b62b8da4cd110e'
-            'ce156c4ff6be6f664f5c1eb41e8ae8228c15d0282410be3ecdd58598bb8867d2'
+            'SKIP'
             'bc36426772e1471d6dd8c8aed91f288e16949e3463a9933fee6390ee0ccd3f81')
 
 prepare() {
   cd "$srcdir/$pkgname-$pkgver"
+
   cp "$srcdir/config.h" config.h
+
+  cp "$srcdir/shiftview.c" shiftview.c
+
+  patch --input "$srcdir/dwm-xresources-$pkgver.diff" || echo
+  patch --input "$srcdir/dwm-fullgaps-$pkgver.diff"   || echo
+  patch --input "$srcdir/dwm-scratchpad-$pkgver.diff" || echo
+  patch --input "$srcdir/dwm-transfer-$pkgver.diff"   || echo
+
+  patch --input "$srcdir/dwm-r1615-selfrestart.diff"  || echo
+
+  cp "$srcdir/config.h" config.def.h
+
+
+  # cp config.def.h.rej "/home/m00n/Dokumenty/dwm/config.def.h.rej"
+
+
+  # cp "config.def.h" config.h
 }
 
 build() {
