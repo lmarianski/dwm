@@ -4,29 +4,40 @@
 static unsigned int borderpx  = 1;        /* border pixel of windows */
 static unsigned int gappx     = 5;        /* gaps between windows */
 static unsigned int snap      = 32;       /* snap pixel */
-static int showbar            = 1;        /* 0 means no bar */
-static int topbar             = 1;        /* 0 means bottom bar */
+static int showbar                  = 1;        /* 0 means no bar */
+static int topbar                   = 1;        /* 0 means bottom bar */
+
+// static const int usealtbar          = 1;        /* 1 means use non-dwm status bar */
+// static const char *altbarclass      = "Polybar"; /* Alternate bar class name */
+// static const char *alttrayname      = "tray";    /* Polybar tray instance name */
+// static const char *altbarcmd        = "$HOME/scripts/bar.sh"; /* Alternate bar launch command */
+
 static char font[]            = "monospace:size=10";
 static const char *fonts[]    = { font, "FontAwesome:size=16" };
 static const char dmenufont[] = "monospace:size=10";
+
 static char normbgcolor[]     = "#222222";
 static char normbordercolor[] = "#444444";
 static char normfgcolor[]     = "#bbbbbb";
 static char selfgcolor[]      = "#eeeeee";
 static char selbordercolor[]  = "#005577";
 static char selbgcolor[]      = "#005577";
-static const unsigned int baralpha = 0xd0;
-static const unsigned int borderalpha = OPAQUE;
 static char *colors[][3]        = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
 	[SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
 };
+
+
+// #if OPAQUE = OPAQUE
+static const unsigned int baralpha = 0xd0;
+static const unsigned int borderalpha = OPAQUE;
 static unsigned int alphas[][3] = {
 	/*               fg      bg        border     */
 	[SchemeNorm] = { OPAQUE, baralpha, borderalpha },
 	[SchemeSel]  = { OPAQUE, baralpha, borderalpha },
 };
+// #endif
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -80,12 +91,28 @@ static const char *mutevol[] = { "/usr/bin/pactl", "set-sink-mute",   "0", "togg
  */
 ResourcePref resources[] = {
 	{ "font",               STRING,  &font },
-	{ "normbgcolor",        STRING,  &normbgcolor },
-	{ "normbordercolor",    STRING,  &normbordercolor },
-	{ "normfgcolor",        STRING,  &normfgcolor },
-	{ "selbgcolor",         STRING,  &selbgcolor },
-	{ "selbordercolor",     STRING,  &selbordercolor },
-	{ "selfgcolor",         STRING,  &selfgcolor },
+
+	// { "color0",             STRING,  &normbgcolor },
+	// { "color8",             STRING,  &normbordercolor },
+	// { "color15",            STRING,  &normfgcolor },
+	// { "color2",             STRING,  &selbgcolor },
+	// { "color15",            STRING,  &selbordercolor },
+	// { "color15",            STRING,  &selfgcolor },	
+
+	{ "color0",		STRING,	&normbordercolor },
+	{ "color8",		STRING,	&selbordercolor },
+	{ "color0",		STRING,	&normbgcolor },
+	{ "color4",		STRING,	&normfgcolor },
+	{ "color0",		STRING,	&selfgcolor },
+	{ "color4",		STRING,	&selbgcolor },
+
+	// { "normbgcolor",        STRING,  &normbgcolor },
+	// { "normbordercolor",    STRING,  &normbordercolor },
+	// { "normfgcolor",        STRING,  &normfgcolor },
+	// { "selbgcolor",         STRING,  &selbgcolor },
+	// { "selbordercolor",     STRING,  &selbordercolor },
+	// { "selfgcolor",         STRING,  &selfgcolor },
+
 	{ "borderpx",          	INTEGER, &borderpx },
 	{ "gappx",          	INTEGER, &gappx },
 	{ "snap",          		INTEGER, &snap },
@@ -122,6 +149,10 @@ static Key keys[] = {
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
+	{ MODKEY|ShiftMask,             XK_Down,   moveresize,     {.v = "0x 0y 0w 25h" } },
+	{ MODKEY|ShiftMask,             XK_Up,     moveresize,     {.v = "0x 0y 0w -25h" } },
+	{ MODKEY|ShiftMask,             XK_Right,  moveresize,     {.v = "0x 0y 25w 0h" } },
+	{ MODKEY|ShiftMask,             XK_Left,   moveresize,     {.v = "0x 0y -25w 0h" } },	
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
 	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
@@ -166,3 +197,22 @@ static Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
 
+#ifdef IPCCOMMAND
+static const char *ipcsockpath = "/tmp/dwm.sock";
+static IPCCommand ipccommands[] = {
+  IPCCOMMAND(  view,                1,      {ARG_TYPE_UINT}   ),
+  IPCCOMMAND(  toggleview,          1,      {ARG_TYPE_UINT}   ),
+  IPCCOMMAND(  tag,                 1,      {ARG_TYPE_UINT}   ),
+  IPCCOMMAND(  toggletag,           1,      {ARG_TYPE_UINT}   ),
+  IPCCOMMAND(  tagmon,              1,      {ARG_TYPE_UINT}   ),
+  IPCCOMMAND(  focusmon,            1,      {ARG_TYPE_SINT}   ),
+  IPCCOMMAND(  focusstack,          1,      {ARG_TYPE_SINT}   ),
+  IPCCOMMAND(  zoom,                1,      {ARG_TYPE_NONE}   ),
+  IPCCOMMAND(  incnmaster,          1,      {ARG_TYPE_SINT}   ),
+  IPCCOMMAND(  killclient,          1,      {ARG_TYPE_SINT}   ),
+  IPCCOMMAND(  togglefloating,      1,      {ARG_TYPE_NONE}   ),
+  IPCCOMMAND(  setmfact,            1,      {ARG_TYPE_FLOAT}  ),
+  IPCCOMMAND(  setlayoutsafe,       1,      {ARG_TYPE_PTR}    ),
+  IPCCOMMAND(  quit,                1,      {ARG_TYPE_NONE}   )
+};
+#endif
