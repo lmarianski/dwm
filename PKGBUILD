@@ -24,6 +24,8 @@ source=(http://dl.suckless.org/dwm/dwm-$pkgver.tar.gz
 	https://dwm.suckless.org/patches/moveresize/dwm-moveresize-20201206-cce77d8.diff
 	https://github.com/mihirlad55/dwm-ipc/releases/download/v1.5.7/dwm-ipc-20201106-f04cac6.diff
 	https://dwm.suckless.org/patches/anybar/dwm-anybar-polybar-tray-fix-20200810-bb2e722.diff
+	https://dwm.suckless.org/patches/mpdcontrol/dwm-r1615-mpdcontrol.diff
+	dwm-mpdcontrol-alpha-fix.diff
 )
 sha256sums=('97902e2e007aaeaa3c6e3bed1f81785b817b7413947f1db1d3b62b8da4cd110e'
 			'bc36426772e1471d6dd8c8aed91f288e16949e3463a9933fee6390ee0ccd3f81'
@@ -36,7 +38,9 @@ sha256sums=('97902e2e007aaeaa3c6e3bed1f81785b817b7413947f1db1d3b62b8da4cd110e'
 			'220d43669ce24e037f8cfe7008893fa05a7da68b00667bc65e558b75a06cd563'
 			'0c8c2305bbb64475f89d332340e6a6e78b32c9e847b7b0aa36d4dda9dad9034d'
 			'497f2ebf639c3eeba28ce21f73b7efd2ef2fc045466e43523231094472112da1'
-			'60d0bf1a071b83f9c64b5a401ecfa3ea79e84fcf73d19a332816e136b4b43960')
+			'60d0bf1a071b83f9c64b5a401ecfa3ea79e84fcf73d19a332816e136b4b43960'
+			'b0833c9327f310b3d9d9c3f59050c7ffce25f87f31eadf3a8580c897ec613582'
+			'SKIP')
 
 prepare() {
 	cd "$srcdir/$pkgname-$pkgver"
@@ -54,6 +58,8 @@ prepare() {
 	patch --input "$srcdir/dwm-transfer-$pkgver.diff"   || echo
 	patch --input "$srcdir/dwm-moveresize-20201206-cce77d8.diff"   || echo
 	patch --input "$srcdir/dwm-r1615-selfrestart.diff"  || echo
+	patch --input "$srcdir/dwm-r1615-mpdcontrol.diff"  || echo
+	patch --input "$srcdir/dwm-mpdcontrol-alpha-fix.diff"  || echo
 
 	# patch --input "$srcdir/dwm-anybar-polybar-tray-fix-20200810-bb2e722.diff"  || echo
 
