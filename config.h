@@ -83,8 +83,8 @@ static const char *termcmd[]  = { "st", NULL };
 static const char scratchpadname[] = "scratchpad";
 static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
 
-static const char *upvol[]   = { "/usr/bin/pactl", "set-sink-volume", "0", "+5%",     NULL };
-static const char *downvol[] = { "/usr/bin/pactl", "set-sink-volume", "0", "-5%",     NULL };
+#define VOLCTRL(amt) { .v = (const char*[]){ "/usr/bin/pactl", "set-sink-volume", "0", amt, NULL } }
+
 static const char *mutevol[] = { "/usr/bin/pactl", "set-sink-mute",   "0", "toggle",  NULL };
 
 /*
@@ -166,9 +166,11 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_equal,  setgaps,        {.i = 0  } },
 	{ MODKEY,                       XK_w,      shiftview,      {.i = +1 } },
 	{ MODKEY,                       XK_q,      shiftview,      {.i = -1 } },
-	{ 0,         XF86XK_AudioLowerVolume,      spawn,          {.v = downvol } },
 	{ 0,         XF86XK_AudioMute,             spawn,          {.v = mutevol } },
-	{ 0,         XF86XK_AudioRaiseVolume,      spawn,          {.v = upvol   } },
+	{ 0,         XF86XK_AudioLowerVolume,      spawn,          VOLCTRL("-5%") },
+	{ 0,         XF86XK_AudioRaiseVolume,      spawn,          VOLCTRL("+5%") },
+	{ ShiftMask, XF86XK_AudioLowerVolume,      spawn,          VOLCTRL("-1%") },
+	{ ShiftMask, XF86XK_AudioRaiseVolume,      spawn,          VOLCTRL("+1%") },
 	{ MODKEY|ShiftMask,             XK_F1,     mpdchange,      {.i = -1} },
 	{ MODKEY|ShiftMask,             XK_F2,     mpdchange,      {.i = +1} },
 	{ MODKEY,                       XK_Escape, mpdcontrol,     {0} },	
