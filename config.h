@@ -4,8 +4,8 @@
 static unsigned int borderpx  = 1;        /* border pixel of windows */
 static unsigned int gappx     = 5;        /* gaps between windows */
 static unsigned int snap      = 32;       /* snap pixel */
-static int showbar                  = 1;        /* 0 means no bar */
-static int topbar                   = 1;        /* 0 means bottom bar */
+static int showbar            = 1;        /* 0 means no bar */
+static int topbar             = 1;        /* 0 means bottom bar */
 
 // static const int usealtbar          = 1;        /* 1 means use non-dwm status bar */
 // static const char *altbarclass      = "Polybar"; /* Alternate bar class name */
@@ -47,9 +47,12 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	/* class                instance    title       tags mask     isfloating   monitor */
+	{ "Gimp",               NULL,       NULL,       0,            1,           -1 },
+	{ "brave-browser",      NULL,       NULL,       1 << 8,       0,           -1 },
+	{ "stalonetray",        NULL,       NULL,       1 << 8,       1,           -1 },
+
+	{ "usbguard-applet-qt", NULL, "USB Device Inserted", 0,       1,           -1 },
 };
 
 /* layout(s) */
@@ -83,9 +86,11 @@ static const char *termcmd[]  = { "st", NULL };
 static const char scratchpadname[] = "scratchpad";
 static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
 
-#define VOLCTRL(amt) { .v = (const char*[]){ "/usr/bin/pactl", "set-sink-volume", "0", amt, NULL } }
+#define VOLCTRL(amt)   { .v = (const char*[]){ "/usr/bin/pactl", "set-sink-volume", "0", amt, NULL } }
+#define AUDIOCTRL(cmd) { .v = (const char*[]){ "/usr/bin/playerctl", cmd, NULL } }
 
 static const char *mutevol[] = { "/usr/bin/pactl", "set-sink-mute",   "0", "toggle",  NULL };
+
 
 /*
  * Xresources preferences to load at startup
@@ -126,7 +131,6 @@ ResourcePref resources[] = {
 
 #include "selfrestart.c"
 #include "shiftview.c"
-#include "mpdcontrol.c"
 
 #include <X11/XF86keysym.h>
 
@@ -165,15 +169,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_equal,  setgaps,        {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_equal,  setgaps,        {.i = 0  } },
 	{ MODKEY,                       XK_w,      shiftview,      {.i = +1 } },
-	{ MODKEY,                       XK_q,      shiftview,      {.i = -1 } },
-	{ 0,         XF86XK_AudioMute,             spawn,          {.v = mutevol } },
-	{ 0,         XF86XK_AudioLowerVolume,      spawn,          VOLCTRL("-5%") },
-	{ 0,         XF86XK_AudioRaiseVolume,      spawn,          VOLCTRL("+5%") },
-	{ ShiftMask, XF86XK_AudioLowerVolume,      spawn,          VOLCTRL("-1%") },
-	{ ShiftMask, XF86XK_AudioRaiseVolume,      spawn,          VOLCTRL("+1%") },
-	{ MODKEY|ShiftMask,             XK_F1,     mpdchange,      {.i = -1} },
-	{ MODKEY|ShiftMask,             XK_F2,     mpdchange,      {.i = +1} },
-	{ MODKEY,                       XK_Escape, mpdcontrol,     {0} },	
+	{ MODKEY,                       XK_q,      shiftview,      {.i = -1 } },	
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
@@ -185,6 +181,17 @@ static Key keys[] = {
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_r,      self_restart,   {0} },
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+
+	/* MEDIA */
+	{ 0,         XF86XK_AudioMute,             spawn,          {.v = mutevol } },
+	{ 0,         XF86XK_AudioLowerVolume,      spawn,          VOLCTRL("-5%") },
+	{ 0,         XF86XK_AudioRaiseVolume,      spawn,          VOLCTRL("+5%") },
+	{ ShiftMask, XF86XK_AudioLowerVolume,      spawn,          VOLCTRL("-1%") },
+	{ ShiftMask, XF86XK_AudioRaiseVolume,      spawn,          VOLCTRL("+1%") },
+	{ MODKEY|ShiftMask,             XK_F1,     spawn,          AUDIOCTRL("previous") },
+	{ MODKEY|ShiftMask,             XK_F2,     spawn,          AUDIOCTRL("next") },
+	// { MODKEY,                       XK_Escape, spawn,          AUDIOCTRL("play-pause") },
+	{ MODKEY,                       XK_Escape, spawn,          SHCMD("~/scripts/media-toggle.sh") },
 };
 
 /* button definitions */
