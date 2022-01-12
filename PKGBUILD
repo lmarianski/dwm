@@ -4,14 +4,15 @@
 
 pkgname=dwm
 pkgver=6.2
-pkgrel=1
+pkgrel=3
 pkgdesc="A dynamic window manager for X"
 url="http://dwm.suckless.org"
 arch=('i686' 'x86_64')
 license=('MIT')
 options=(zipman)
 depends=('libx11' 'libxinerama' 'libxft' 'freetype2')
-source=(http://dl.suckless.org/dwm/dwm-$pkgver.tar.gz
+source=(
+	https://dl.suckless.org/dwm/dwm-$pkgver.tar.gz
 	dwm.desktop
 	# https://dwm.suckless.org/patches/selfrestart/dwm-r1615-selfrestart.diff
 	dwm-r1615-selfrestart.diff
@@ -84,6 +85,8 @@ prepare() {
 	# After this test, config.def.h is copied from $srcdir to $BUILDDIR to
 	# provide an up to date template for the user.
 	echo $srcdir
+
+	echo 
 
 	if [ -e "$BUILDDIR/config.h" ]
 	then
