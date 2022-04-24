@@ -88,6 +88,7 @@ static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34
 
 #define VOLCTRL(amt)   { .v = (const char*[]){ "/usr/bin/pactl", "set-sink-volume", "0", amt, NULL } }
 #define AUDIOCTRL(cmd) { .v = (const char*[]){ "/usr/bin/playerctl", cmd, NULL } }
+#define BRGCTRL(amt)   { .v = (const char*[]){ "/usr/bin/brightnessctl", "set", amt, NULL } }
 
 static const char *mutevol[] = { "/usr/bin/pactl", "set-sink-mute",   "0", "toggle",  NULL };
 
@@ -144,8 +145,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
 	// { MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
 	// { MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
-	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
-	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
+	{ MODKEY|ShiftMask,                       XK_h,      setmfact,       {.f = -0.05} },
+	{ MODKEY|ShiftMask,                       XK_l,      setmfact,       {.f = +0.05} },
 	{ MODKEY,                       XK_x,      transfer,       {0} },
 	{ MODKEY,                       XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
@@ -183,15 +184,23 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 
 	/* MEDIA */
-	{ 0,         XF86XK_AudioMute,             spawn,          {.v = mutevol } },
+	{ 0,                XF86XK_AudioMute,      spawn,          {.v = mutevol } },
 	{ 0,         XF86XK_AudioLowerVolume,      spawn,          VOLCTRL("-5%") },
 	{ 0,         XF86XK_AudioRaiseVolume,      spawn,          VOLCTRL("+5%") },
 	{ ShiftMask, XF86XK_AudioLowerVolume,      spawn,          VOLCTRL("-1%") },
 	{ ShiftMask, XF86XK_AudioRaiseVolume,      spawn,          VOLCTRL("+1%") },
-	{ MODKEY|ShiftMask,             XK_F1,     spawn,          AUDIOCTRL("previous") },
-	{ MODKEY|ShiftMask,             XK_F2,     spawn,          AUDIOCTRL("next") },
+	{ MODKEY|ShiftMask,            XK_F1,      spawn,          AUDIOCTRL("previous") },
+	{ MODKEY|ShiftMask,            XK_F2,      spawn,          AUDIOCTRL("next") },
 	// { MODKEY,                       XK_Escape, spawn,          AUDIOCTRL("play-pause") },
-	{ MODKEY,                       XK_Escape, spawn,          SHCMD("~/scripts/media-toggle.sh") },
+	{ MODKEY,                      XK_Escape,  spawn,          SHCMD("~/scripts/media-toggle.sh") },
+	/* FN */
+	{ MODKEY,                       XK_l,      spawn,          SHCMD("xautolock -locknow") },
+	{ 0,         XF86XK_MonBrightnessDown,     spawn,          BRGCTRL("10%-") },
+	{ ShiftMask, XF86XK_MonBrightnessDown,     spawn,          BRGCTRL("5%-") },
+	{ 0,         XF86XK_MonBrightnessUp,       spawn,          BRGCTRL("+10%") },
+	{ ShiftMask, XF86XK_MonBrightnessUp,       spawn,          BRGCTRL("+5%") },
+	{ 0,         XF86XK_Calculator,            spawn,          SHCMD("$CALCULATOR") },
+
 };
 
 /* button definitions */
